@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -12,22 +13,22 @@ namespace ModCallExample
 
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Use to enter a subworld. Only works with 'SubworldLibrary' Mod enabled");
+			// Tooltip.SetDefault("Use to enter a subworld. Only works with 'SubworldLibrary' Mod enabled");
 		}
 
 		public override void SetDefaults()
 		{
-			item.maxStack = 1;
-			item.width = 34;
-			item.height = 38;
-			item.rare = 12;
-			item.useStyle = 4;
-			item.useTime = 30;
-			item.useAnimation = 30;
-			item.UseSound = SoundID.Item1;
+			Item.maxStack = 1;
+			Item.width = 34;
+			Item.height = 38;
+			Item.rare = 12;
+			Item.useStyle = 4;
+			Item.useTime = 30;
+			Item.useAnimation = 30;
+			Item.UseSound = SoundID.Item1;
 		}
 
-		public override bool UseItem(Player player)
+		public override bool? UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
 		{
 			//Enter should be called on exactly one side, which here is either the singleplayer player, or the server
 			if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -49,7 +50,7 @@ namespace ModCallExample
 
 					if (Main.netMode == NetmodeID.Server)
 					{
-						NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(message), Color.Orange);
+						ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message), Color.Orange);
 					}
 					else
 					{
@@ -64,10 +65,9 @@ namespace ModCallExample
 
 		public override void AddRecipes()
 		{
-			ModRecipe recipe = new ModRecipe(mod);
+			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.DirtBlock, 1);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 }
