@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
@@ -39,29 +39,30 @@ namespace SubworldLibrary
 		{
 			add
 			{
-				HookEndpointManager.Modify(typeof(SocialSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
-				HookEndpointManager.Modify(typeof(TcpSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
+				MonoModHooks.Modify(typeof(SocialSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
+				MonoModHooks.Modify(typeof(TcpSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
 			}
 			remove
 			{
-				HookEndpointManager.Unmodify(typeof(SocialSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
-				HookEndpointManager.Unmodify(typeof(TcpSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
+				// There needs to be a better way to manage hook removal in 1.4.4. Do you know how to do it? ~Setnour6?
+				MonoModHooks.Modify(typeof(SocialSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
+				MonoModHooks.Modify(typeof(TcpSocket).GetMethod("Terraria.Net.Sockets.ISocket.AsyncSend", BindingFlags.NonPublic | BindingFlags.Instance), value);
 			}
 		}
 
 		public override void Load()
 		{
-			ModTranslation translation = LocalizationLoader.CreateTranslation("Mods.SubworldLibrary.Return");
-			translation.AddTranslation(1, "Return");
-			translation.AddTranslation(2, "Wiederkehren");
-			translation.AddTranslation(3, "Ritorno");
-			translation.AddTranslation(4, "Retour");
-			translation.AddTranslation(5, "Regresar");
-			translation.AddTranslation(6, "\u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0442\u044C\u0441\u044F");
-			translation.AddTranslation(7, "\u8FD4\u56DE");
-			translation.AddTranslation(8, "Regressar");
-			translation.AddTranslation(9, "Wraca\u0107");
-			LocalizationLoader.AddTranslation(translation);
+			LocalizedText translation = Language.GetOrRegister("Mods.SubworldLibrary.Return");
+			//translation.AddTranslation(1, "Return");
+			//translation.AddTranslation(2, "Wiederkehren");
+			//translation.AddTranslation(3, "Ritorno");
+			//translation.AddTranslation(4, "Retour");
+			//translation.AddTranslation(5, "Regresar");
+			//translation.AddTranslation(6, "\u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0442\u044C\u0441\u044F"); //Возвращаться
+			//translation.AddTranslation(7, "\u8FD4\u56DE"); //返回
+			//translation.AddTranslation(8, "Regressar");
+			//translation.AddTranslation(9, "Wraca\u0107"); //Wracać
+			//LocalizationLoader.AddTranslation(translation);
 
 			FieldInfo current = typeof(SubworldSystem).GetField("current", BindingFlags.NonPublic | BindingFlags.Static);
 			FieldInfo cache = typeof(SubworldSystem).GetField("cache", BindingFlags.NonPublic | BindingFlags.Static);
@@ -71,7 +72,7 @@ namespace SubworldLibrary
 
 			if (Main.dedServ)
 			{
-				IL.Terraria.Main.DedServ_PostModLoad += il =>
+				Terraria.IL_Main.DedServ_PostModLoad += il =>
 				{
 					ConstructorInfo gameTime = typeof(GameTime).GetConstructor(Type.EmptyTypes);
 					MethodInfo update = typeof(Main).GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -152,7 +153,7 @@ namespace SubworldLibrary
 
 				if (!Program.LaunchParameters.ContainsKey("-subworld"))
 				{
-					IL.Terraria.NetMessage.CheckBytes += il =>
+					Terraria.IL_NetMessage.CheckBytes += il =>
 					{
 						var c = new ILCursor(il);
 
@@ -203,7 +204,7 @@ namespace SubworldLibrary
 			}
 			else
 			{
-				IL.Terraria.Main.DoDraw += il =>
+				Terraria.IL_Main.DoDraw += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -254,7 +255,7 @@ namespace SubworldLibrary
 					c.MarkLabel(skip);
 				};
 
-				IL.Terraria.Main.DrawBackground += il =>
+				Terraria.IL_Main.DrawBackground += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -281,7 +282,7 @@ namespace SubworldLibrary
 					c.MarkLabel(label);
 				};
 
-				IL.Terraria.Main.OldDrawBackground += il =>
+				Terraria.IL_Main.OldDrawBackground += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -308,7 +309,7 @@ namespace SubworldLibrary
 					c.MarkLabel(label);
 				};
 
-				IL.Terraria.IngameOptions.Draw += il =>
+				Terraria.IL_IngameOptions.Draw += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -366,7 +367,7 @@ namespace SubworldLibrary
 					c.Emit(Brtrue, label);
 				};
 
-				IL.Terraria.Graphics.Light.TileLightScanner.GetTileLight += il =>
+				Terraria.Graphics.Light.IL_TileLightScanner.GetTileLight += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -409,7 +410,7 @@ namespace SubworldLibrary
 					c.MarkLabel(skip);
 				};
 
-				IL.Terraria.Player.UpdateBiomes += il =>
+				Terraria.IL_Player.UpdateBiomes += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -436,7 +437,7 @@ namespace SubworldLibrary
 					c.MarkLabel(label);
 				};
 
-				IL.Terraria.Main.DrawUnderworldBackground += il =>
+				Terraria.IL_Main.DrawUnderworldBackground += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -447,7 +448,7 @@ namespace SubworldLibrary
 					c.MarkLabel(skip);
 				};
 
-				IL.Terraria.Netplay.AddCurrentServerToRecentList += il =>
+				Terraria.IL_Netplay.AddCurrentServerToRecentList += il =>
 				{
 					var c = new ILCursor(il);
 
@@ -459,7 +460,7 @@ namespace SubworldLibrary
 				};
 			}
 
-			IL.Terraria.WorldGen.do_worldGenCallBack += il =>
+			Terraria.IL_WorldGen.do_worldGenCallBack += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -471,7 +472,7 @@ namespace SubworldLibrary
 				c.Emit(Mono.Cecil.Cil.OpCodes.Call, typeof(SubworldSystem).GetMethod("GenerateSubworlds", BindingFlags.NonPublic | BindingFlags.Static));
 			};
 
-			IL.Terraria.Main.EraseWorld += il =>
+			Terraria.IL_Main.EraseWorld += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -479,7 +480,7 @@ namespace SubworldLibrary
 				c.Emit(Mono.Cecil.Cil.OpCodes.Call, typeof(SubworldSystem).GetMethod("EraseSubworlds", BindingFlags.NonPublic | BindingFlags.Static));
 			};
 
-			IL.Terraria.Main.DoUpdateInWorld += il =>
+			Terraria.IL_Main.DoUpdateInWorld += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -507,7 +508,7 @@ namespace SubworldLibrary
 				c.MarkLabel(label);
 			};
 
-			IL.Terraria.WorldGen.UpdateWorld += il =>
+			Terraria.IL_WorldGen.UpdateWorld += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -532,7 +533,7 @@ namespace SubworldLibrary
 				c.MarkLabel(label);
 			};
 
-			IL.Terraria.Player.Update += il =>
+			Terraria.IL_Player.Update += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -560,7 +561,7 @@ namespace SubworldLibrary
 				c.MarkLabel(label);
 			};
 
-			IL.Terraria.NPC.UpdateNPC_UpdateGravity += il =>
+			Terraria.IL_NPC.UpdateNPC_UpdateGravity += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -588,7 +589,7 @@ namespace SubworldLibrary
 				c.MarkLabel(label);
 			};
 
-			IL.Terraria.Liquid.Update += il =>
+			Terraria.IL_Liquid.Update += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -606,7 +607,7 @@ namespace SubworldLibrary
 				}
 			};
 
-			IL.Terraria.Player.SavePlayer += il =>
+			Terraria.IL_Player.SavePlayer += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -653,7 +654,7 @@ namespace SubworldLibrary
 				c.MarkLabel(label);
 			};
 
-			IL.Terraria.IO.WorldFile.SaveWorld_bool_bool += il =>
+			Terraria.IO.IL_WorldFile.SaveWorld_bool_bool += il =>
 			{
 				var c = new ILCursor(il);
 
@@ -1605,7 +1606,8 @@ namespace SubworldLibrary
 			}
 			SystemLoader.OnWorldUnload();
 
-			Main.fastForwardTime = false;
+			Main.fastForwardTimeToDawn = false;
+			Main.fastForwardTimeToDusk = false;
 			Main.UpdateTimeRate();
 			WorldGen.noMapUpdate = true;
 
@@ -1687,7 +1689,7 @@ namespace SubworldLibrary
 				{
 					Main.Map.Load();
 				}
-				Main.sectionManager.SetAllFramesLoaded();
+				Main.sectionManager.SetAllSectionsLoaded(); //previously: Main.sectionManager.SetAllFramesLoaded()
 				while (Main.mapEnabled && Main.loadMapLock)
 				{
 					Main.statusText = Lang.gen[68].Value + " " + (int)((float)Main.loadMapLastX / Main.maxTilesX * 100 + 1) + "%";
@@ -1755,13 +1757,13 @@ namespace SubworldLibrary
 			WorldGen.clearWorld();
 			Main.worldSurface = Main.maxTilesY * 0.3;
 			Main.rockLayer = Main.maxTilesY * 0.5;
-			WorldGen.waterLine = Main.maxTilesY;
+			GenVars.waterLine = Main.maxTilesY;
 			Main.weatherCounter = 18000;
 			Cloud.resetClouds();
 
 			ReadCopiedMainWorldData();
 
-			float weight = 0;
+			double weight = 0;
 			for (int i = 0; i < current.Tasks.Count; i++)
 			{
 				weight += current.Tasks[i].Weight;
@@ -1899,7 +1901,7 @@ namespace SubworldLibrary
 
 		internal static void PostLoadWorldFile()
 		{
-			WorldGen.waterLine = Main.maxTilesY;
+			GenVars.waterLine = Main.maxTilesY;
 			Liquid.QuickWater(2);
 			WorldGen.WaterCheck();
 			Liquid.quickSettle = true;

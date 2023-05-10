@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Generation;
 using Terraria.ID;
+using Terraria.IO;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 
 namespace ModCallExample
 {
@@ -91,7 +92,7 @@ namespace ModCallExample
 			{
 				//First pass
 				new PassLegacy("Adjusting",
-				delegate (GenerationProgress progress)
+				delegate (GenerationProgress progress, GameConfiguration configuration)
 				{
 					progress.Message = "Adjusting world levels"; //Sets the text above the worldgen progress bar
 					Main.worldSurface = Main.maxTilesY - 42; //Hides the underground layer just out of bounds
@@ -100,7 +101,7 @@ namespace ModCallExample
 				1f),
 				//Second pass
 				new PassLegacy("GeneratingBorders",
-				delegate (GenerationProgress progress)
+				delegate (GenerationProgress progress, GameConfiguration configuration)
 				{
 					progress.Message = "Generating subworld borders";
 
