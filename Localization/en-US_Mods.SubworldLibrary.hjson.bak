@@ -1,1 +1,8 @@
 Return: Return
+
+Items: {
+	SubworldEnteringItem: {
+		DisplayName: Super Dummy
+		Tooltip: Use to enter a subworld. Only works with 'SubworldLibrary' Mod enabled
+	}
+}
