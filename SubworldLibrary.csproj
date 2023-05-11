@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\tModLoader.targets" />
-  <PropertyGroup>
-    <AssemblyName>SubworldLibrary</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
-  </ItemGroup>
+	<Import Project="..\tModLoader.targets" />
+	<PropertyGroup>
+		<AssemblyName>SubworldLibrary</AssemblyName>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+		<TargetFramework>net6.0</TargetFramework>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<LangVersion>preview</LangVersion>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+		<Reference Include="tModLoader" />
+		<Reference Include="MonoMod.Utils" />
+		<Reference Include="Mono.Cecil" />
+		<Reference Include="FNA" />
+		<Reference Include="MonoMod.RuntimeDetour" />
+		<Reference Include="TerrariaHooks">
+			<HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\tModLoader\Libraries\TerrariaHooks\0.0.0.0\TerrariaHooks.dll</HintPath>
+		</Reference>
+		<Reference Include="ReLogic" />
+		<Reference Include="log4net" />
+	</ItemGroup>
 </Project>
